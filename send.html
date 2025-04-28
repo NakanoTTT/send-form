@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>営業データワンクリック送信</title>
+</head>
+<body>
+  <h2>営業データワンクリック送信</h2>
+
+  <textarea id="jsonInput" rows="20" cols="80" placeholder="ChatGPTから出力されたJSONをそのまま貼り付けてください"></textarea>
+  <br><br>
+  <button onclick="sendData()">🚀 送信する！</button>
+
+  <p id="result"></p>
+
+  <script>
+    async function sendData() {
+      const url = "https://script.google.com/macros/s/AKfycbxqD8HizldCdCLKI5RknT6v6R5twOdMD9lyHOiYfT_OLOTkg_MTfMf3AOM6rjfGoyzONw/exec"; // あなたのWebhook URLをここに！
+
+      const jsonText = document.getElementById('jsonInput').value.trim();
+
+      if (!jsonText.startsWith('{') || !jsonText.endsWith('}')) {
+        document.getElementById('result').innerText = '❌ JSON形式が正しくありません';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("data", jsonText);
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          document.getElementById('result').innerText = '✅ 成功しました！';
+          document.getElementById('jsonInput').value = ''; // 成功したらクリア
+        } else {
+          document.getElementById('result').innerText = '❌ エラー発生: ' + response.status;
+        }
+      } catch (error) {
+        document.getElementById('result').innerText = '❌ ネットワークエラー: ' + error;
+      }
+    }
+  </script>
+
+</body>
+</html>
